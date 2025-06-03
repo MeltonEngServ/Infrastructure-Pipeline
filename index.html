@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head><script src="assets/js/color-modes.js"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Johnston Wang">
+    <title>Infrastructure Pipeline and Asset Hub</title>
+
+    <!-- Math lib -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-polyline/1.1.1/polyline.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
+    
+    <!-- Style lib -->
+    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Report lib -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Excel Report lib -->
+    <script src="xlsx-js-style/xlsx.bundle.js"></script>
+
+    <!-- Mapbox api -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js"></script>
+
+    <!-- CSS -->
+    <link href="styles.css" rel="stylesheet">
+
+    <link href="suburbward toggle.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  </head>
+
+  <body>
+
+    <div id="map"></div>
+
+    <div id="map-legend">
+      <div id="legend-items"></div>
+  </div>
+  
+    <div class="tooltip" id="tooltip"></div>
+
+    <div id="searchBar">
+      <input type="text" id="address" placeholder="Enter an address" autocomplete="off" />
+      <div id="suggestions" style="position: absolute; z-index: 1; display: none;"></div>
+    </div>
+
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="check2" viewBox="0 0 16 16">
+        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+      </symbol>
+      <symbol id="circle-half" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
+      </symbol>
+      <symbol id="moon-stars-fill" viewBox="0 0 16 16">
+        <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+        <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
+      </symbol>
+      <symbol id="sun-fill" viewBox="0 0 16 16">
+        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+      </symbol>
+    </svg>
+
+    <!-- Theme Toggle -->
+    <div class="dropdown position-fixed bottom-0 start-0 mb-3 ms-3 bd-mode-toggle">
+      <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
+              id="bd-theme"
+              type="button"
+              aria-expanded="false"
+              data-bs-toggle="dropdown"
+              aria-label="Toggle theme (auto)">
+        <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><use href="#circle-half"></use></svg>
+        <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
+        <li>
+          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#sun-fill"></use></svg>
+            Light
+            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#moon-stars-fill"></use></svg>
+            Dark
+            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
+            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#circle-half"></use></svg>
+            Auto
+            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
+          </button>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Icon -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="icon" viewBox="0 0 1024 1024">
+      <path d="M459.6 267.9c57 1.1 103.4-45.3 102.3-102.3-1-54-44.6-97.5-98.5-98.5-57-1.1-103.4 45.3-102.3 102.3 1 54 44.6 97.5 98.5 98.5zM346.5 669.3s-120.6-58.9-168.7-70.1c-10.5-2.4-21 3.9-23.8 14.2-14.8 54.4-75.4 254.9-93.8 321.2-3.5 12.7 6 25.3 19.3 25.3h35.2c8.1 0 15.3-4.8 18.4-12.3 20.3-48.6 79.6-227.3 88.6-227.3 67.4-0.4 124.1 86.7 121.9 112.8-2.8 32.2-21.2 71-35.6 97.1-7.3 13.3 2.3 29.7 17.5 29.7h40.3c7 0 13.6-3.7 17.2-9.8 36.4-61.2 48.5-99 48.6-121.7 0.4-56.4-54.6-145-85.1-159.1z"  /><path d="M957.8 917L789.5 598.5c-27.3-47.3-84.2-13.8-111.5 33.5l-72.9 102.1-38.6-36.5c0.8-4.8 0.8-10.5-0.3-17-12.4-72.1-67.5-318.8-107.8-358.4-1.3-1.3-2.8-2.4-4.5-3.2l-124.8-66.1c-6.3-3.4-13.4-4.9-20.6-4.6-43.5 2.1-142.6 16.6-174.4 21.4-6.3 1-11.8 4.9-14.8 10.5C109 300 80 348.7 63.9 386.7c-6.4 15-3 32.4 8.6 43.9L94 448l74.5 57.5c6.6 5.1 9.4 13.8 6.9 21.8-6.6 20.9-0.7 5.7-3.2 15.5-2.5 9.9 2.8 20.2 12.5 23.7 34.2 12.5 125.6 60.6 160.8 70.6 9.9 2.8 8.2-7.3 12-16.8l-3.9-5.2 219.4 168L485.5 932c-7.7 13.3 1.9 30 17.3 30H931.8c23.1 0 37.6-25 26-45zM240.1 360.6c-9.6 17.7-18.4 38.3-29.8 67.7-5.1 13.3-22.1 17-32.4 7.2L138 398c-2-1.7 14.9-38.2 25.3-57.5 3.6-6.7 10.6-10.7 18.2-10.5l41.7 1.2c14.8 0.3 24 16.3 16.9 29.4zM378 554l26.8-66.1c7-17.5 32.1-16.5 37.7 1.5 14.4 46.7 34.7 117.2 56.3 164.5L378 554z"  />
+      </symbol>
+    </svg>
+    
+    <main class="d-flex flex-nowrap">
+
+      <div class="sidebar flex-shrink-0 p-3">
+        <div class="content">
+        <div class="d-flex align-items-center pb-3 mb-3 text-decoration-none border-bottom">
+          <svg class="bi pe-none me-2" width="30" height="30"><use xlink:href="#icon"/></svg> 
+          <span class="fs-5 fw-semibold title-text">Infrastructure Pipeline & Asset Hub</span>
+        </div>
+
+        <!-- Suburb/Wards View -->
+        <span class="switcher switcher-2">
+          <input type="checkbox" id="suburbWardToggle">
+          <label for="suburbWardToggle"></label>
+       </span>
+       
+
+        <ul class="list-unstyled ps-0">
+ 
+          <!-- Buttons --->
+          
+          <!-- Highlight features -->
+          <button id="showPopupsButton">Highlight Filtered Data</button>
+          
+
+
+        <!-- Filter Dropdowns -->
+        <li class="mb-1">
+            <button id="originFilterDropdownButton" class="filter-dropdown-btn">
+                Project/Program Origin
+            </button>
+        </li>
+        
+        <div id="originFilterDropdown" class="dropdown">
+            <input type="text" placeholder="Search..." id="originSearchInput" onkeyup="originFilterSearchFunction()">
+            <div id="originFilterOptions"></div>
+        </div>
+
+        <li class="mb-1">
+            <button id="parentProgramFilterDropdownButton" class="filter-dropdown-btn">
+                Parent Program
+            </button>
+        </li>
+        
+        <div id="parentProgramFilterDropdown" class="dropdown">
+            <input type="text" placeholder="Search..." id="parentProgramSearchInput" onkeyup="parentProgramFilterSearchFunction()">
+            <div id="parentProgramFilterOptions"></div>
+        </div>
+
+        <li class="mb-1">
+            <button id="childProgramFilterDropdownButton" class="filter-dropdown-btn">
+                Child Program
+            </button>
+        </li>
+        
+        <div id="childProgramFilterDropdown" class="dropdown">
+            <input type="text" placeholder="Search..." id="childProgramSearchInput" onkeyup="childProgramFilterSearchFunction()">
+            <div id="childProgramFilterOptions"></div>
+        </div>
+
+        <li class="mb-1">
+            <button id="startYearFilterDropdownButton" class="filter-dropdown-btn">
+                Project/Program Start Year
+            </button>
+        </li>
+        
+        <div id="startYearFilterDropdown" class="dropdown">
+            <input type="text" placeholder="Search..." id="startYearSearchInput" onkeyup="startYearFilterSearchFunction()">
+            <div id="startYearFilterOptions"></div>
+        </div>
+
+        <li class="mb-1">
+            <button id="assetCategoryFilterDropdownButton" class="filter-dropdown-btn">
+                Asset Category
+            </button>
+        </li>
+        
+        <div id="assetCategoryFilterDropdown" class="dropdown">
+            <input type="text" placeholder="Search..." id="assetCategorySearchInput" onkeyup="assetCategoryFilterSearchFunction()">
+            <div id="assetCategoryFilterOptions"></div>
+        </div>
+
+        <li class="border-top my-4" style="width: 87.5%; margin-left: 0%; margin-right: auto;"></li>
+
+
+        <p id="projectCount" class="text-muted mt-3" style="font-size: 0.75em; padding-left: 2%;">Total Projects: </p>
+
+        <li class="border-top my-4" style="width: 87.5%; margin-left: 0%; margin-right: auto;"></li>
+        
+
+          <!-- Generate Reports Dropdown -->
+          <li class="mb-1">
+            <button id="generateReportsDropdownButton" class="report-dropdown-btn">
+              Generate Report
+            </button>
+            <ul id="reportFormatDropdown">
+              <li><button id="generatePDFButton">PDF</button></li>
+              <li><button id="generateExcelButton">Excel</button></li>
+            </ul>
+          </li>
+
+          </ul>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="analysisModal" tabindex="-1" aria-labelledby="analysisModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="analysisModalLabel">Capital Works</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+    </main>
+
+    <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="main.js"></script>
+    
+    <script src="filter.js"></script>
+
+    <script src="highlight filter.js"></script>
+
+    <script src="report generation.js"></script>
+
+    <script src="dropdown filters.js"></script>
+
+
+  </body>
+
+</html>

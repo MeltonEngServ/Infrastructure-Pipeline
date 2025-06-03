@@ -1,0 +1,477 @@
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
+html {
+  height: -webkit-fill-available;
+}
+
+main {
+  height: 100vh;
+  height: -webkit-fill-available;
+  max-height: 100vh;
+  overflow-x: none;
+  overflow-y: none;
+}
+
+.title-text {
+  font-size: 2vw;
+}
+
+.sidebar {
+  flex-basis: 300px;
+  width: 300px;
+  height: 97.5vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+}
+
+.sidebar .content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-bottom: 20px;
+  user-select: none;
+}
+
+.sidebar .content::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+.btn-toggle {
+  padding: .25rem .5rem;
+  font-weight: 600;
+  font-size: 1em;
+  color: rgba(var(--bs-emphasis-color-rgb), .3);
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+
+.sub-btn-toggle {
+  padding: .25rem .5rem;
+  font-weight: 600;
+  font-size: 0.8em;
+  margin-left: 1vw;
+  color: rgba(var(--bs-emphasis-color-rgb), .3);
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.sub-btn-toggle:hover,
+.sub-btn-toggle:focus,
+.btn-toggle:hover,
+.btn-toggle:focus {
+  color: rgba(var(--bs-emphasis-color-rgb), .3);
+  background-color: transparent;
+}
+
+.sub-btn-toggle.active,
+.btn-toggle.active {
+  color: var(--bs-emphasis-color);
+
+}
+
+.btn-toggle::before {
+  content: none;
+}
+
+.btn-bd-primary {
+  --bd-violet-bg: #712cf9;
+  --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+  --bs-btn-font-weight: 600;
+  --bs-btn-color: var(--bs-white);
+  --bs-btn-bg: var(--bd-violet-bg);
+  --bs-btn-border-color: var(--bd-violet-bg);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: #6528e0;
+  --bs-btn-hover-border-color: #6528e0;
+  --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  --bs-btn-active-bg: #5a23c8;
+  --bs-btn-active-border-color: #5a23c8;
+  z-index: 2;
+}
+
+.bd-mode-toggle {
+  z-index: 2;
+}
+
+
+.title-text {
+  font-size: 2vw;
+}
+
+
+.bi {
+  vertical-align: -.125em;
+  fill: currentColor;
+}
+
+.nav-scroller .nav {
+  display: flex;
+  flex-wrap: nowrap;
+  margin-top: -1px;
+  overflow-x: auto;
+  text-align: center;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* Default button styles */
+#showPopupsButton {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  padding: 10px 10px;
+
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* Hover effect */
+#showPopupsButton:hover {
+  transform: translateY(-2px);
+  opacity: 0.8;
+}
+
+/* Focus effect */
+#showPopupsButton:focus {
+  outline: none;
+}
+
+
+
+/* Filter Dropdowns */
+.filter-dropdown-btn {
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9em;
+  margin-left: 0.5vw;
+  color: var(--bs-emphasis-color-rgb);
+  outline: none;
+  padding: .25rem .5rem;
+}
+
+.filter-dropdown-btn::after {
+  content: " ▼";
+}
+
+.filter-dropdown-btn.active::after {
+  content: " ▲";
+}
+
+.filter-dropdown-btn.active {
+  color: var(--bs-emphasis-color);
+}
+
+/* Filter Dropdowns */
+#originFilterDropdown,
+#parentProgramFilterDropdown,
+#childProgramFilterDropdown,
+#startYearFilterDropdown,
+#assetCategoryFilterDropdown {
+  display: block;
+  background: var(--dropdown-bg);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-height: 0;
+  overflow: hidden;
+  font-size: 16px;
+  width: 240px;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+}
+
+#originFilterDropdown.show,
+#parentProgramFilterDropdown.show,
+#childProgramFilterDropdown.show,
+#startYearFilterDropdown.show,
+#assetCategoryFilterDropdown.show {
+  max-height: 300px;
+  opacity: 1;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+/* Webkit (Chrome, Safari, Edge) */
+#originFilterDropdown.show::-webkit-scrollbar,
+#parentProgramFilterDropdown.show::-webkit-scrollbar,
+#childProgramFilterDropdown.show::-webkit-scrollbar,
+#startYearFilterDropdown.show::-webkit-scrollbar,
+#assetCategoryFilterDropdown.show::-webkit-scrollbar {
+  width: 6px; /* Thin scrollbar */
+}
+
+#originFilterDropdown.show::-webkit-scrollbar-thumb,
+#parentProgramFilterDropdown.show::-webkit-scrollbar-thumb,
+#childProgramFilterDropdown.show::-webkit-scrollbar-thumb,
+#startYearFilterDropdown.show::-webkit-scrollbar-thumb,
+#assetCategoryFilterDropdown.show::-webkit-scrollbar-thumb {
+  background: transparent; /* Transparent track */
+}
+
+#originFilterDropdown.show::-webkit-scrollbar-track,
+#parentProgramFilterDropdown.show::-webkit-scrollbar-track,
+#childProgramFilterDropdown.show::-webkit-scrollbar-track,
+#startYearFilterDropdown.show::-webkit-scrollbar-track,
+#assetCategoryFilterDropdown.show::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2); /* Light scrollbar */
+  border-radius: 10px;
+}
+
+#originFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#parentProgramFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#childProgramFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#startYearFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#assetCategoryFilterDropdown.show::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4); /* Darker scrollbar on hover */
+}
+
+/* Firefox */
+#originFilterDropdown.show,
+#parentProgramFilterDropdown.show,
+#childProgramFilterDropdown.show,
+#startYearFilterDropdown.show,
+#assetCategoryFilterDropdown.show {
+  scrollbar-width: thin; /* Thin scrollbar */
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent; /* Thumb and track color */
+}
+
+/* Filter Inputs */
+#originFilterDropdown input,
+#parentProgramFilterDropdown input,
+#childProgramFilterDropdown input,
+#startYearFilterDropdown input,
+#assetCategoryFilterDropdown input {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 3px;
+  background: var(--search-bar-bg);
+  color: var(--search-bar-text);
+  font-size: 14px;
+  outline: none;
+}
+
+/* Filter Labels */
+#originFilterDropdown label,
+#parentProgramFilterDropdown label,
+#childProgramFilterDropdown label,
+#startYearFilterDropdown label,
+#assetCategoryFilterDropdown label {
+  display: block;
+  padding: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8em;
+}
+
+#originFilterDropdown label.active,
+#parentProgramFilterDropdown label.active,
+#childProgramFilterDropdown label.active,
+#startYearFilterDropdown label.active,
+#assetCategoryFilterDropdown label.active {
+  color: rgba(var(--bs-emphasis-color-rgb), 0.3);
+}
+
+
+
+/* Map */
+#map { 
+  position: absolute; 
+  top: 0;
+  bottom: 0;
+  width: calc(100vw - 275px);
+  margin-left: 275px;
+  z-index: 0;
+}
+
+#map-legend {
+  position: absolute;
+  bottom: 30px;
+  left: 285px;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#legend-items div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+#legend-items div span {
+  margin-left: 10px;
+}
+
+
+#searchBar {
+  position: absolute;
+  top: 2%;
+  left: 290px;
+  width: 200px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  background-color: var(--search-bar-bg);
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+#address {
+  width: 100%;
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid var(--search-bar-border); 
+  border-radius: 5px;
+  z-index: 1;
+  color: var(--search-bar-text);
+  box-sizing: border-box;
+}
+
+#address:focus {
+  outline: none;
+  border: 1px solid transparent;
+}
+
+
+/* Switch Styling */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider::before {
+  transform: translateX(26px);
+}
+
+
+
+/* Report Generation Button */
+.report-dropdown-btn {
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1em;
+  color: var(--bs-emphasis-color-rgb);
+  outline: none;
+  padding: .25rem .5rem;
+}
+
+/* Show arrow for dropdown */
+.report-dropdown-btn::after {
+  content: " ▼";
+}
+
+/* Active state for the button (when clicked) */
+.report-dropdown-btn.active::after {
+  content: " ▲";
+}
+
+.report-dropdown-btn.active {
+  color: var(--bs-emphasis-color);
+}
+
+/* Prevent greyed out for Report Generation Button */
+.report-dropdown-btn:disabled {
+  pointer-events: none;
+  opacity: 1;
+}
+
+/* Dropdown container for options */
+#reportFormatDropdown {
+  display: none;
+  background: var(--dropdown-bg);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-height: 0;
+  overflow: hidden;
+  font-size: 14px;
+  width: 240px;
+  opacity: 0;
+  transition: height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+}
+
+#reportFormatDropdown.show {
+  display: block;
+  max-height: 600px;
+  opacity: 1;
+}
+
+#reportFormatDropdown li button {
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8em;
+  color: var(--bs-emphasis-color-rgb);
+  outline: none;
+  padding: .25rem .5rem;
+  width: 100%;
+  display: block;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Adjust hover effect for dark theme */
+#reportFormatDropdown li button:hover {
+  background-color: #f0f0f088;
+  color: var(--bs-dark-text-color);
+}

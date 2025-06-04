@@ -1,5 +1,5 @@
 function showFilteredDataPopups() {
-    const mapSource = map.getSource('CapitalWorksData');
+    const mapSource = map.getSource('InfraPipelineData');
 
     if (!mapSource || !mapSource._data || !mapSource._data.features) {
         console.error("GeoJSON data not loaded or invalid.");
@@ -9,29 +9,34 @@ function showFilteredDataPopups() {
     const filteredFeatures = mapSource._data.features;
 
     // Get current theme (light or dark)
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-
-    // Loop through the filtered features and create a popup for each
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';    // Loop through the filtered features and create a popup for each
     filteredFeatures.forEach((feature) => {
         const properties = feature.properties || {};
-        const status = properties.status ? properties.status.trim() : '';
-        const civilOperationsStaff = properties.name_of_civil_operations_staff_assigned_to_deliver_the_proje || '';
-        const civilOperationsStaffOther = properties.name_of_civil_operations_staff_assigned_to_deliver_the_proje_other || '';
         
-
-        // Start building the popup content
+        // Start building the popup content with required fields
         let popupContent = '<strong>Project Name:</strong> ' + (properties.project_name || 'Unnamed Project') + '<br>';
 
-        if (status) {
-            popupContent += `<strong>Status:</strong> ${status}<br>`;
+        // Add Project Description if available
+        if (properties.project_description) {
+            const description = properties.project_description.length > 100 ? 
+                properties.project_description.substring(0, 100) + '...' : 
+                properties.project_description;
+            popupContent += `<strong>Description:</strong> ${description}<br>`;
         }
 
-        if (civilOperationsStaff) {
-            popupContent += `<strong>Civil Operations Staff:</strong> ${civilOperationsStaff}<br>`;
+        // Add Parent Program if available
+        if (properties.parent_program) {
+            popupContent += `<strong>Parent Program:</strong> ${properties.parent_program}<br>`;
         }
 
-        if (civilOperationsStaffOther) {
-            popupContent += `<strong>Civil Operations Staff:</strong> ${civilOperationsStaffOther}<br>`;
+        // Add Child Program if available
+        if (properties.child_program) {
+            popupContent += `<strong>Child Program:</strong> ${properties.child_program}<br>`;
+        }
+
+        // Add Project Start Year if available
+        if (properties.project_or_program_start_year || properties.start_year) {
+            popupContent += `<strong>Start Year:</strong> ${properties.project_or_program_start_year || properties.start_year}<br>`;
         }
 
         // If no valid data, set a fallback message

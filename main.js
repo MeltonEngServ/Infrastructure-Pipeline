@@ -96,12 +96,17 @@ addressInput.addEventListener('input', function() {
         return;
     }
 
-    const lowerQuery = query.toLowerCase();
-
-    // Search through local data (project_name match)
-    const matchedLocalFeatures = window.originalData.features.filter(feature =>
-        feature.properties.project_name && feature.properties.project_name.toString().toLowerCase().includes(lowerQuery)
-    );
+    const lowerQuery = query.toLowerCase();    // Search through local data (project_name, public_description, and asset_id match)
+    const matchedLocalFeatures = window.originalData.features.filter(feature => {
+        const properties = feature.properties || {};
+        const projectName = (properties.project_name || '').toString().toLowerCase();
+        const publicDescription = (properties.project_description || '').toString().toLowerCase();
+        const assetId = (properties.asset_id || '').toString().toLowerCase();
+        
+        return projectName.includes(lowerQuery) || 
+               publicDescription.includes(lowerQuery) || 
+               assetId.includes(lowerQuery);
+    });
 
     if (matchedLocalFeatures.length > 0) {
         suggestionsDiv.style.display = 'block';
@@ -109,11 +114,17 @@ addressInput.addEventListener('input', function() {
         // Limit to first 6 results
         const limitedResults = matchedLocalFeatures.slice(0, 6);
     
-        limitedResults.forEach((feature, index) => {
-            const suggestionItem = document.createElement('div');
-            const projectName = feature.properties.project_name || 'Unknown Project Name';
+        limitedResults.forEach((feature, index) => {            const suggestionItem = document.createElement('div');
+            const properties = feature.properties || {};
+            const projectName = properties.project_name || 'Unknown Project Name';
+            const assetId = properties.asset_id ? ` (Asset ID: ${properties.asset_id})` : '';
+            const description = properties.project_description ? 
+                (properties.project_description.length > 50 ? 
+                    `${properties.project_description.substring(0, 50)}...` : 
+                    properties.project_description) : '';
     
-            suggestionItem.textContent = `(Project Name: ${projectName})`;
+            suggestionItem.innerHTML = `<strong>${projectName}</strong>${assetId}<br>
+                                      <small>${description}</small>`;
             suggestionItem.style.cursor = 'pointer';
             suggestionItem.style.padding = '5px';
             suggestionItem.style.borderBottom = '1px solid #ddd';

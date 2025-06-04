@@ -141,7 +141,7 @@ function generateStartYearFilters() {
         sortFunction: (a, b) => {
             if (a === "Blank") return -1;
             if (b === "Blank") return 1;
-            return b - a; // Sort years in descending order
+            return parseInt(b) - parseInt(a); // Sort years in descending order, ensuring numeric comparison
         }
     });
 }
@@ -184,16 +184,215 @@ function assetCategoryFilterSearchFunction() {
     });
 }
 
+// Project Name Filter
+function generateProjectNameFilters() {
+    generateFilters({
+        containerId: "projectNameFilterOptions",
+        filterClass: "project-name-filter",
+        getValueFromFeature: (feature) => 
+            feature.properties.project_name || "Blank"
+    });
+}
+
+// Project Name Filter Dropdown Toggle and Search
+document.getElementById("projectNameFilterDropdownButton").addEventListener("click", function () {
+    const dropdown = document.getElementById("projectNameFilterDropdown");
+    dropdown.classList.toggle("show");
+    this.classList.toggle("active");
+});
+
+function projectNameFilterSearchFunction() {
+    const input = document.getElementById("projectNameSearchInput").value.toLowerCase();
+    document.querySelectorAll("#projectNameFilterOptions label").forEach(label => {
+        label.style.display = label.textContent.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+
+// Project Sponsor Filter
+function generateProjectSponsorFilters() {
+    generateFilters({
+        containerId: "projectSponsorFilterOptions",
+        filterClass: "project-sponsor-filter",
+        getValueFromFeature: (feature) => 
+            feature.properties.project_sponsor || "Blank"
+    });
+}
+
+// Project Sponsor Filter Dropdown Toggle and Search
+document.getElementById("projectSponsorFilterDropdownButton").addEventListener("click", function () {
+    const dropdown = document.getElementById("projectSponsorFilterDropdown");
+    dropdown.classList.toggle("show");
+    this.classList.toggle("active");
+});
+
+function projectSponsorFilterSearchFunction() {
+    const input = document.getElementById("projectSponsorSearchInput").value.toLowerCase();
+    document.querySelectorAll("#projectSponsorFilterOptions label").forEach(label => {
+        label.style.display = label.textContent.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+
+// Project Owner Filter
+function generateProjectOwnerFilters() {
+    generateFilters({
+        containerId: "projectOwnerFilterOptions",
+        filterClass: "project-owner-filter",
+        getValueFromFeature: (feature) => 
+            feature.properties.project_owner_by_role || "Blank"
+    });
+}
+
+// Project Owner Filter Dropdown Toggle and Search
+document.getElementById("projectOwnerFilterDropdownButton").addEventListener("click", function () {
+    const dropdown = document.getElementById("projectOwnerFilterDropdown");
+    dropdown.classList.toggle("show");
+    this.classList.toggle("active");
+});
+
+function projectOwnerFilterSearchFunction() {
+    const input = document.getElementById("projectOwnerSearchInput").value.toLowerCase();
+    document.querySelectorAll("#projectOwnerFilterOptions label").forEach(label => {
+        label.style.display = label.textContent.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+
+// Project Type Filter
+function generateProjectTypeFilters() {
+    generateFilters({
+        containerId: "projectTypeFilterOptions",
+        filterClass: "project-type-filter",
+        getValueFromFeature: (feature) => 
+            feature.properties.project_type || "Blank"
+    });
+}
+
+// Project Type Filter Dropdown Toggle and Search
+document.getElementById("projectTypeFilterDropdownButton").addEventListener("click", function () {
+    const dropdown = document.getElementById("projectTypeFilterDropdown");
+    dropdown.classList.toggle("show");
+    this.classList.toggle("active");
+});
+
+function projectTypeFilterSearchFunction() {
+    const input = document.getElementById("projectTypeSearchInput").value.toLowerCase();
+    document.querySelectorAll("#projectTypeFilterOptions label").forEach(label => {
+        label.style.display = label.textContent.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+
+// In Flight Filter
+function generateInFlightFilters() {
+    generateFilters({
+        containerId: "inFlightFilterOptions",
+        filterClass: "in-flight-filter",
+        getValueFromFeature: (feature) => 
+            feature.properties.committed || "Blank"
+    });
+}
+
+// In Flight Filter Dropdown Toggle and Search
+document.getElementById("inFlightFilterDropdownButton").addEventListener("click", function () {
+    const dropdown = document.getElementById("inFlightFilterDropdown");
+    dropdown.classList.toggle("show");
+    this.classList.toggle("active");
+});
+
+function inFlightFilterSearchFunction() {
+    const input = document.getElementById("inFlightSearchInput").value.toLowerCase();
+    document.querySelectorAll("#inFlightFilterOptions label").forEach(label => {
+        label.style.display = label.textContent.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+
+// Delivery Agent Filter
+function generateDeliveryAgentFilters() {
+    generateFilters({
+        containerId: "deliveryAgentFilterOptions",
+        filterClass: "delivery-agent-filter",
+        getValueFromFeature: (feature) => 
+            feature.properties.project_delivery_agent || "Blank"
+    });
+}
+
+// Delivery Agent Filter Dropdown Toggle and Search
+document.getElementById("deliveryAgentFilterDropdownButton").addEventListener("click", function () {
+    const dropdown = document.getElementById("deliveryAgentFilterDropdown");
+    dropdown.classList.toggle("show");
+    this.classList.toggle("active");
+});
+
+function deliveryAgentFilterSearchFunction() {
+    const input = document.getElementById("deliveryAgentSearchInput").value.toLowerCase();
+    document.querySelectorAll("#deliveryAgentFilterOptions label").forEach(label => {
+        label.style.display = label.textContent.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+
+// Asset Expenditure Filter
+function generateAssetExpenditureFilters() {
+    generateFilters({
+        containerId: "assetExpenditureFilterOptions",
+        filterClass: "asset-expenditure-filter",
+        getValueFromFeature: (feature) => 
+            feature.properties.asset_expenditure_type || "Blank"
+    });
+}
+
+// Asset Expenditure Filter Dropdown Toggle and Search
+document.getElementById("assetExpenditureFilterDropdownButton").addEventListener("click", function () {
+    const dropdown = document.getElementById("assetExpenditureFilterDropdown");
+    dropdown.classList.toggle("show");
+    this.classList.toggle("active");
+});
+
+function assetExpenditureFilterSearchFunction() {
+    const input = document.getElementById("assetExpenditureSearchInput").value.toLowerCase();
+    document.querySelectorAll("#assetExpenditureFilterOptions label").forEach(label => {
+        label.style.display = label.textContent.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+
+// Project Manager Filter
+function generateProjectManagerFilters() {
+    generateFilters({
+        containerId: "projectManagerFilterOptions",
+        filterClass: "project-manager-filter",
+        getValueFromFeature: (feature) => 
+            feature.properties.project_manager || "Blank"
+    });
+}
+
+// Project Manager Filter Dropdown Toggle and Search
+document.getElementById("projectManagerFilterDropdownButton").addEventListener("click", function () {
+    const dropdown = document.getElementById("projectManagerFilterDropdown");
+    dropdown.classList.toggle("show");
+    this.classList.toggle("active");
+});
+
+function projectManagerFilterSearchFunction() {
+    const input = document.getElementById("projectManagerSearchInput").value.toLowerCase();
+    document.querySelectorAll("#projectManagerFilterOptions label").forEach(label => {
+        label.style.display = label.textContent.toLowerCase().includes(input) ? "" : "none";
+    });
+}
 
 // Initialize Filters on Page Load
 document.addEventListener("DOMContentLoaded", () => {
     function initializeFilters() {
         if (window.originalData && window.originalData.features && window.originalData.features.length > 0) {
-    generateOriginFilters();
-    generateParentProgramFilters();
-    generateChildProgramFilters();
-    generateStartYearFilters();
-    generateAssetCategoryFilters();
+            generateOriginFilters();
+            generateParentProgramFilters();
+            generateChildProgramFilters();
+            generateStartYearFilters();
+            generateAssetCategoryFilters();
+            generateProjectNameFilters();
+            generateProjectSponsorFilters();
+            generateProjectOwnerFilters();
+            generateProjectTypeFilters();
+            generateInFlightFilters();
+            generateDeliveryAgentFilters();
+            generateAssetExpenditureFilters();
+            generateProjectManagerFilters();
         }
     }
 

@@ -185,28 +185,44 @@ main {
 #parentProgramFilterDropdown,
 #childProgramFilterDropdown,
 #startYearFilterDropdown,
-#assetCategoryFilterDropdown {
-  display: block;
-  background: var(--dropdown-bg);
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  max-height: 0;
-  overflow: hidden;
-  font-size: 16px;
-  width: 240px;
-  opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+#assetCategoryFilterDropdown,
+#projectNameFilterDropdown,
+#projectSponsorFilterDropdown,
+#projectOwnerFilterDropdown,
+#projectTypeFilterDropdown,
+#inFlightFilterDropdown,
+#deliveryAgentFilterDropdown,
+#assetExpenditureFilterDropdown,
+#projectManagerFilterDropdown {
+    display: block;
+    background: var(--dropdown-bg);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-height: 0;
+    overflow: hidden;
+    font-size: 16px;
+    width: 240px;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
 }
 
 #originFilterDropdown.show,
 #parentProgramFilterDropdown.show,
 #childProgramFilterDropdown.show,
 #startYearFilterDropdown.show,
-#assetCategoryFilterDropdown.show {
-  max-height: 300px;
-  opacity: 1;
-  overflow-y: auto;
-  padding: 5px;
+#assetCategoryFilterDropdown.show,
+#projectNameFilterDropdown.show,
+#projectSponsorFilterDropdown.show,
+#projectOwnerFilterDropdown.show,
+#projectTypeFilterDropdown.show,
+#inFlightFilterDropdown.show,
+#deliveryAgentFilterDropdown.show,
+#assetExpenditureFilterDropdown.show,
+#projectManagerFilterDropdown.show {
+    max-height: 300px;
+    opacity: 1;
+    overflow-y: auto;
+    padding: 5px;
 }
 
 /* Webkit (Chrome, Safari, Edge) */
@@ -214,33 +230,65 @@ main {
 #parentProgramFilterDropdown.show::-webkit-scrollbar,
 #childProgramFilterDropdown.show::-webkit-scrollbar,
 #startYearFilterDropdown.show::-webkit-scrollbar,
-#assetCategoryFilterDropdown.show::-webkit-scrollbar {
-  width: 6px; /* Thin scrollbar */
+#assetCategoryFilterDropdown.show::-webkit-scrollbar,
+#projectNameFilterDropdown.show::-webkit-scrollbar,
+#projectSponsorFilterDropdown.show::-webkit-scrollbar,
+#projectOwnerFilterDropdown.show::-webkit-scrollbar,
+#projectTypeFilterDropdown.show::-webkit-scrollbar,
+#inFlightFilterDropdown.show::-webkit-scrollbar,
+#deliveryAgentFilterDropdown.show::-webkit-scrollbar,
+#assetExpenditureFilterDropdown.show::-webkit-scrollbar,
+#projectManagerFilterDropdown.show::-webkit-scrollbar {
+    width: 6px; /* Thin scrollbar */
 }
 
 #originFilterDropdown.show::-webkit-scrollbar-thumb,
 #parentProgramFilterDropdown.show::-webkit-scrollbar-thumb,
 #childProgramFilterDropdown.show::-webkit-scrollbar-thumb,
 #startYearFilterDropdown.show::-webkit-scrollbar-thumb,
-#assetCategoryFilterDropdown.show::-webkit-scrollbar-thumb {
-  background: transparent; /* Transparent track */
+#assetCategoryFilterDropdown.show::-webkit-scrollbar-thumb,
+#projectNameFilterDropdown.show::-webkit-scrollbar-thumb,
+#projectSponsorFilterDropdown.show::-webkit-scrollbar-thumb,
+#projectOwnerFilterDropdown.show::-webkit-scrollbar-thumb,
+#projectTypeFilterDropdown.show::-webkit-scrollbar-thumb,
+#inFlightFilterDropdown.show::-webkit-scrollbar-thumb,
+#deliveryAgentFilterDropdown.show::-webkit-scrollbar-thumb,
+#assetExpenditureFilterDropdown.show::-webkit-scrollbar-thumb,
+#projectManagerFilterDropdown.show::-webkit-scrollbar-thumb {
+    background: transparent; /* Transparent track */
 }
 
 #originFilterDropdown.show::-webkit-scrollbar-track,
 #parentProgramFilterDropdown.show::-webkit-scrollbar-track,
 #childProgramFilterDropdown.show::-webkit-scrollbar-track,
 #startYearFilterDropdown.show::-webkit-scrollbar-track,
-#assetCategoryFilterDropdown.show::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2); /* Light scrollbar */
-  border-radius: 10px;
+#assetCategoryFilterDropdown.show::-webkit-scrollbar-track,
+#projectNameFilterDropdown.show::-webkit-scrollbar-track,
+#projectSponsorFilterDropdown.show::-webkit-scrollbar-track,
+#projectOwnerFilterDropdown.show::-webkit-scrollbar-track,
+#projectTypeFilterDropdown.show::-webkit-scrollbar-track,
+#inFlightFilterDropdown.show::-webkit-scrollbar-track,
+#deliveryAgentFilterDropdown.show::-webkit-scrollbar-track,
+#assetExpenditureFilterDropdown.show::-webkit-scrollbar-track,
+#projectManagerFilterDropdown.show::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2); /* Light scrollbar */
+    border-radius: 10px;
 }
 
 #originFilterDropdown.show::-webkit-scrollbar-thumb:hover,
 #parentProgramFilterDropdown.show::-webkit-scrollbar-thumb:hover,
 #childProgramFilterDropdown.show::-webkit-scrollbar-thumb:hover,
 #startYearFilterDropdown.show::-webkit-scrollbar-thumb:hover,
-#assetCategoryFilterDropdown.show::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.4); /* Darker scrollbar on hover */
+#assetCategoryFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#projectNameFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#projectSponsorFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#projectOwnerFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#projectTypeFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#inFlightFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#deliveryAgentFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#assetExpenditureFilterDropdown.show::-webkit-scrollbar-thumb:hover,
+#projectManagerFilterDropdown.show::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4); /* Darker scrollbar on hover */
 }
 
 /* Firefox */
@@ -248,9 +296,17 @@ main {
 #parentProgramFilterDropdown.show,
 #childProgramFilterDropdown.show,
 #startYearFilterDropdown.show,
-#assetCategoryFilterDropdown.show {
-  scrollbar-width: thin; /* Thin scrollbar */
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent; /* Thumb and track color */
+#assetCategoryFilterDropdown.show,
+#projectNameFilterDropdown.show,
+#projectSponsorFilterDropdown.show,
+#projectOwnerFilterDropdown.show,
+#projectTypeFilterDropdown.show,
+#inFlightFilterDropdown.show,
+#deliveryAgentFilterDropdown.show,
+#assetExpenditureFilterDropdown.show,
+#projectManagerFilterDropdown.show {
+    scrollbar-width: thin; /* Thin scrollbar */
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent; /* Thumb and track color */
 }
 
 /* Filter Inputs */
@@ -258,16 +314,24 @@ main {
 #parentProgramFilterDropdown input,
 #childProgramFilterDropdown input,
 #startYearFilterDropdown input,
-#assetCategoryFilterDropdown input {
-  width: 100%;
-  padding: 5px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 3px;
-  background: var(--search-bar-bg);
-  color: var(--search-bar-text);
-  font-size: 14px;
-  outline: none;
+#assetCategoryFilterDropdown input,
+#projectNameFilterDropdown input,
+#projectSponsorFilterDropdown input,
+#projectOwnerFilterDropdown input,
+#projectTypeFilterDropdown input,
+#inFlightFilterDropdown input,
+#deliveryAgentFilterDropdown input,
+#assetExpenditureFilterDropdown input,
+#projectManagerFilterDropdown input {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 3px;
+    background: var(--search-bar-bg);
+    color: var(--search-bar-text);
+    font-size: 14px;
+    outline: none;
 }
 
 /* Filter Labels */
@@ -275,20 +339,36 @@ main {
 #parentProgramFilterDropdown label,
 #childProgramFilterDropdown label,
 #startYearFilterDropdown label,
-#assetCategoryFilterDropdown label {
-  display: block;
-  padding: 5px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.8em;
+#assetCategoryFilterDropdown label,
+#projectNameFilterDropdown label,
+#projectSponsorFilterDropdown label,
+#projectOwnerFilterDropdown label,
+#projectTypeFilterDropdown label,
+#inFlightFilterDropdown label,
+#deliveryAgentFilterDropdown label,
+#assetExpenditureFilterDropdown label,
+#projectManagerFilterDropdown label {
+    display: block;
+    padding: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8em;
 }
 
 #originFilterDropdown label.active,
 #parentProgramFilterDropdown label.active,
 #childProgramFilterDropdown label.active,
 #startYearFilterDropdown label.active,
-#assetCategoryFilterDropdown label.active {
-  color: rgba(var(--bs-emphasis-color-rgb), 0.3);
+#assetCategoryFilterDropdown label.active,
+#projectNameFilterDropdown label.active,
+#projectSponsorFilterDropdown label.active,
+#projectOwnerFilterDropdown label.active,
+#projectTypeFilterDropdown label.active,
+#inFlightFilterDropdown label.active,
+#deliveryAgentFilterDropdown label.active,
+#assetExpenditureFilterDropdown label.active,
+#projectManagerFilterDropdown label.active {
+    color: rgba(var(--bs-emphasis-color-rgb), 0.3);
 }
 
 

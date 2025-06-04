@@ -21,7 +21,7 @@ main {
 
 .sidebar {
   flex-basis: 300px;
-  width: 300px;
+  width: 400px;
   height: 97.5vh;
   display: flex;
   flex-direction: column;
@@ -50,6 +50,10 @@ main {
   background-color: transparent;
   border: none;
   outline: none;
+}
+
+.btn-toggle:not(.active) {
+  opacity: 0.5;
 }
 
 

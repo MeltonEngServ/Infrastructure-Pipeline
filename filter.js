@@ -150,3 +150,20 @@ function applyFiltersWhenSourcesReady() {
 }
 
 applyFiltersWhenSourcesReady();
+
+
+
+// Add event listener for Business Precincts toggle
+document.getElementById('businessPrecinctsButton').addEventListener('click', function() {
+    const button = this;
+    button.classList.toggle('active');
+    const isActive = button.classList.contains('active');
+    
+    // Toggle visibility of all Business Precinct layers
+    const layers = ['BusinessPrecinctData-polygons-layer', 'BusinessPrecinctData-lines-layer', 'BusinessPrecinctData-points-layer'];
+    layers.forEach(layer => {
+        if (map.getLayer(layer)) {
+            map.setLayoutProperty(layer, 'visibility', isActive ? 'visible' : 'none');
+        }
+    });
+});

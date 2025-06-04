@@ -320,21 +320,10 @@ function selectSuggestion(feature) {
     markers.push(newMarker);
 }
 
-
 // Fetch Data
 map.on('load', async function () {
     try {
-        // Fetch Infrastructure Pipeline data
-        const infraResponse = await fetch('https://web.fulcrumapp.com/shares/0107845e48091efd.geojson');
-        if (!infraResponse.ok) {
-            throw new Error(`Failed to load Infrastructure Pipeline GeoJSON. Status: ${infraResponse.status}`);
-        }
-        const infraData = await infraResponse.json();
-        window.originalData = infraData;
-        console.log('Infrastructure Pipeline Data:', window.originalData);
-        addGeoJsonData(window.originalData, 'InfraPipelineData');
-
-        // Fetch Business Precincts data
+        // Fetch and add Business Precincts data first (bottom layer)
         const precinctResponse = await fetch('https://web.fulcrumapp.com/shares/0929fdf2b2d07a9d.geojson');
         if (!precinctResponse.ok) {
             throw new Error(`Failed to load Business Precincts GeoJSON. Status: ${precinctResponse.status}`);
@@ -343,6 +332,16 @@ map.on('load', async function () {
         window.precinctData = precinctData;
         console.log('Business Precincts Data:', window.precinctData);
         addGeoJsonData(window.precinctData, 'BusinessPrecinctData');
+
+        // Then fetch and add Infrastructure Pipeline data (top layer)
+        const infraResponse = await fetch('https://web.fulcrumapp.com/shares/0107845e48091efd.geojson');
+        if (!infraResponse.ok) {
+            throw new Error(`Failed to load Infrastructure Pipeline GeoJSON. Status: ${infraResponse.status}`);
+        }
+        const infraData = await infraResponse.json();
+        window.originalData = infraData;
+        console.log('Infrastructure Pipeline Data:', window.originalData);
+        addGeoJsonData(window.originalData, 'InfraPipelineData');
 
     } catch (error) {
         console.error('Error loading data:', error);
@@ -443,19 +442,36 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
     map.addSource(sourceId, {
         type: 'geojson',
         data: geojsonData
-    });    // Save source and layers configuration
+    });    
+    
+    // Save source and layers configuration - order matters for visual layering
     geoJsonSourcesAndLayers.push({
         sourceId,
-        layers: [            // Points Layer
+        layers: [
+            // Polygons Layer (bottom)
             {
-                'id': `${sourceId}-points-layer`,
-                'type': 'circle',
+                'id': `${sourceId}-polygons-layer`,
+                'type': 'fill',
                 'source': sourceId,
-                'filter': ['==', '$type', 'Point'],
-                'paint': {
-                    'circle-radius': 5,
-                    'circle-color': sourceId === 'BusinessPrecinctData' ? 
+                'filter': ['==', '$type', 'Polygon'],
+                'paint': {                    
+                    'fill-color': sourceId === 'BusinessPrecinctData' ? 
                         '#FF69B4' : [ // Pink color for Business Precincts
+                        'case',
+                        ['==', ['get', 'status'], 'Transport'], '#294184',
+                        ['==', ['get', 'status'], 'Community'], '#1891c9',
+                        ['==', ['get', 'status'], 'Information Technology'], '#cb0d0c',
+                        ['==', ['get', 'status'], 'Open Space'], '#87d30f',
+                        ['==', ['get', 'status'], 'Recreation'], '#ffd300',
+                        ['==', ['get', 'status'], 'Stormwater'], '#00bcd4',
+                        ['==', ['get', 'status'], 'Land'], '#9c27b0',
+                        ['==', ['get', 'status'], 'Major Project'], '#ff5722',
+                        ['==', ['get', 'status'], 'Other'], '#757575',
+                        '#757575' // Default/fallback color
+                    ],
+                    'fill-opacity': 0.6,
+                    'fill-outline-color': sourceId === 'BusinessPrecinctData' ? 
+                        '#FF1493' : [ // Darker pink for Business Precincts outline
                         'case',
                         ['==', ['get', 'status'], 'Transport'], '#294184',
                         ['==', ['get', 'status'], 'Community'], '#1891c9',
@@ -469,7 +485,8 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
                         '#757575' // Default/fallback color
                     ]
                 }
-            },            // Lines Layer
+            },
+            // Lines Layer (middle)
             {
                 'id': `${sourceId}-lines-layer`,
                 'type': 'line',
@@ -492,28 +509,17 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
                         '#757575' // Default/fallback color
                     ]
                 }
-            },            // Polygons Layer (includes both Polygon and MultiPolygon)
+            },
+            // Points Layer (top)
             {
-                'id': `${sourceId}-polygons-layer`,
-                'type': 'fill',
+                'id': `${sourceId}-points-layer`,
+                'type': 'circle',
                 'source': sourceId,
-                'filter': ['==', '$type', 'Polygon'],
-                'paint': {                    'fill-color': sourceId === 'BusinessPrecinctData' ? 
+                'filter': ['==', '$type', 'Point'],
+                'paint': {
+                    'circle-radius': 5,
+                    'circle-color': sourceId === 'BusinessPrecinctData' ? 
                         '#FF69B4' : [ // Pink color for Business Precincts
-                        'case',
-                        ['==', ['get', 'status'], 'Transport'], '#294184',
-                        ['==', ['get', 'status'], 'Community'], '#1891c9',
-                        ['==', ['get', 'status'], 'Information Technology'], '#cb0d0c',
-                        ['==', ['get', 'status'], 'Open Space'], '#87d30f',
-                        ['==', ['get', 'status'], 'Recreation'], '#ffd300',
-                        ['==', ['get', 'status'], 'Stormwater'], '#00bcd4',
-                        ['==', ['get', 'status'], 'Land'], '#9c27b0',
-                        ['==', ['get', 'status'], 'Major Project'], '#ff5722',
-                        ['==', ['get', 'status'], 'Other'], '#757575',
-                        '#757575' // Default/fallback color
-                    ],
-                    'fill-opacity': 0.6,                    'fill-outline-color': sourceId === 'BusinessPrecinctData' ? 
-                        '#FF1493' : [ // Darker pink for Business Precincts outline
                         'case',
                         ['==', ['get', 'status'], 'Transport'], '#294184',
                         ['==', ['get', 'status'], 'Community'], '#1891c9',
@@ -531,7 +537,7 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
         ]
     });
 
-    // Add layers to the map
+    // Add layers to the map in the correct order
     geoJsonSourcesAndLayers[geoJsonSourcesAndLayers.length - 1].layers.forEach(layer => {
         map.addLayer({ ...layer, source: sourceId });
     });

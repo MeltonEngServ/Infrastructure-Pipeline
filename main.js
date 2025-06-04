@@ -324,16 +324,25 @@ function selectSuggestion(feature) {
 // Fetch Data
 map.on('load', async function () {
     try {
-        // Fetch single dataset
-        const response = await fetch('https://web.fulcrumapp.com/shares/0107845e48091efd.geojson');
-        if (!response.ok) {
-            throw new Error(`Failed to load GeoJSON. Status: ${response.status}`);
+        // Fetch Infrastructure Pipeline data
+        const infraResponse = await fetch('https://web.fulcrumapp.com/shares/0107845e48091efd.geojson');
+        if (!infraResponse.ok) {
+            throw new Error(`Failed to load Infrastructure Pipeline GeoJSON. Status: ${infraResponse.status}`);
         }
-        const data = await response.json();
-        
-        window.originalData = data;
-        console.log('GeoJSON Data:', window.originalData);
+        const infraData = await infraResponse.json();
+        window.originalData = infraData;
+        console.log('Infrastructure Pipeline Data:', window.originalData);
         addGeoJsonData(window.originalData, 'InfraPipelineData');
+
+        // Fetch Business Precincts data
+        const precinctResponse = await fetch('https://web.fulcrumapp.com/shares/0929fdf2b2d07a9d.geojson');
+        if (!precinctResponse.ok) {
+            throw new Error(`Failed to load Business Precincts GeoJSON. Status: ${precinctResponse.status}`);
+        }
+        const precinctData = await precinctResponse.json();
+        window.precinctData = precinctData;
+        console.log('Business Precincts Data:', window.precinctData);
+        addGeoJsonData(window.precinctData, 'BusinessPrecinctData');
 
     } catch (error) {
         console.error('Error loading data:', error);
@@ -379,7 +388,10 @@ function createLegend() {
     // If the theme is 'auto', detect the system's theme
     if (savedTheme === 'auto') {
         savedTheme = getSystemTheme();  // Detect system theme (dark or light)
-    }    const legendItems = {
+    }    
+    
+    const legendItems = {
+        'Business Precincts': '#FF69B4',   // Pink
         'Transport': '#294184',        // Dark Blue
         'Community': '#1891c9',        // Light Blue
         'Information Technology': '#cb0d0c',  // Red
@@ -434,8 +446,7 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
     });    // Save source and layers configuration
     geoJsonSourcesAndLayers.push({
         sourceId,
-        layers: [
-            // Points Layer
+        layers: [            // Points Layer
             {
                 'id': `${sourceId}-points-layer`,
                 'type': 'circle',
@@ -443,7 +454,8 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
                 'filter': ['==', '$type', 'Point'],
                 'paint': {
                     'circle-radius': 5,
-                    'circle-color': [
+                    'circle-color': sourceId === 'BusinessPrecinctData' ? 
+                        '#FF69B4' : [ // Pink color for Business Precincts
                         'case',
                         ['==', ['get', 'status'], 'Transport'], '#294184',
                         ['==', ['get', 'status'], 'Community'], '#1891c9',
@@ -457,8 +469,7 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
                         '#757575' // Default/fallback color
                     ]
                 }
-            },
-            // Lines Layer
+            },            // Lines Layer
             {
                 'id': `${sourceId}-lines-layer`,
                 'type': 'line',
@@ -466,7 +477,8 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
                 'filter': ['==', '$type', 'LineString'],
                 'paint': {
                     'line-width': 3,
-                    'line-color': [
+                    'line-color': sourceId === 'BusinessPrecinctData' ? 
+                        '#FF69B4' : [ // Pink color for Business Precincts
                         'case',
                         ['==', ['get', 'status'], 'Transport'], '#294184',
                         ['==', ['get', 'status'], 'Community'], '#1891c9',
@@ -486,8 +498,8 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
                 'type': 'fill',
                 'source': sourceId,
                 'filter': ['==', '$type', 'Polygon'],
-                'paint': {
-                    'fill-color': [
+                'paint': {                    'fill-color': sourceId === 'BusinessPrecinctData' ? 
+                        '#FF69B4' : [ // Pink color for Business Precincts
                         'case',
                         ['==', ['get', 'status'], 'Transport'], '#294184',
                         ['==', ['get', 'status'], 'Community'], '#1891c9',
@@ -500,8 +512,8 @@ function addGeoJsonSourceAndLayers(geojsonData, sourceId) {
                         ['==', ['get', 'status'], 'Other'], '#757575',
                         '#757575' // Default/fallback color
                     ],
-                    'fill-opacity': 0.6,
-                    'fill-outline-color': [
+                    'fill-opacity': 0.6,                    'fill-outline-color': sourceId === 'BusinessPrecinctData' ? 
+                        '#FF1493' : [ // Darker pink for Business Precincts outline
                         'case',
                         ['==', ['get', 'status'], 'Transport'], '#294184',
                         ['==', ['get', 'status'], 'Community'], '#1891c9',
@@ -606,17 +618,28 @@ function addTooltip(sourceId) {
             if (currentFulcrumID !== newFulcrumID) {
                 currentFulcrumID = newFulcrumID;
 
-                // Prepare tooltip content dynamically
-                const fields = [
-                    { label: 'Project Name', value: properties.project_name },
-                    { label: 'Public Name', value: properties.public_name },
-                    { label: 'Status', value: properties.status },
-                    { label: 'Parent Program', value: properties.parent_program },
-                    { label: 'Child Program', value: properties.child_program },
-                    { label: 'Project Manager', value: properties.project_manager },
-                    { label: 'Ward', value: properties.ward },
-                    { label: 'Suburb', value: properties.suburb }
-                ];
+                // Determine fields based on source type
+                let fields = [];
+                if (sourceId === 'BusinessPrecinctData') {
+                    fields = [
+                        { label: 'Precinct Name', value: properties.precinct_name },
+                        { label: 'Business Types', value: properties.business_types },
+                        { label: 'Main Roads', value: properties.main_roads },
+                        { label: 'Notes', value: properties.notes_councilbody_corpshopping_centre },
+                        { label: 'Suburb', value: properties.suburb }
+                    ];
+                } else {
+                    fields = [
+                        { label: 'Project Name', value: properties.project_name },
+                        { label: 'Public Name', value: properties.public_name },
+                        { label: 'Status', value: properties.status },
+                        { label: 'Parent Program', value: properties.parent_program },
+                        { label: 'Child Program', value: properties.child_program },
+                        { label: 'Project Manager', value: properties.project_manager },
+                        { label: 'Ward', value: properties.ward },
+                        { label: 'Suburb', value: properties.suburb }
+                    ];
+                }
 
                 let tooltipContent = '';
                 fields.forEach(field => {
@@ -678,16 +701,27 @@ function addTooltip(sourceId) {
                 currentFulcrumID = newFulcrumID;
 
                 // Prepare tooltip content dynamically
-                const fields = [
-                    { label: 'Project Name', value: properties.project_name },
-                    { label: 'Public Name', value: properties.public_name },
-                    { label: 'Status', value: properties.status },
-                    { label: 'Parent Program', value: properties.parent_program },
-                    { label: 'Child Program', value: properties.child_program },
-                    { label: 'Project Manager', value: properties.project_manager },
-                    { label: 'Ward', value: properties.ward },
-                    { label: 'Suburb', value: properties.suburb }
-                ];
+                let fields = [];
+                if (sourceId === 'BusinessPrecinctData') {
+                    fields = [
+                        { label: 'Precinct Name', value: properties.precinct_name },
+                        { label: 'Business Types', value: properties.business_types },
+                        { label: 'Main Roads', value: properties.main_roads },
+                        { label: 'Notes', value: properties.notes_councilbody_corpshopping_centre },
+                        { label: 'Suburb', value: properties.suburb }
+                    ];
+                } else {
+                    fields = [
+                        { label: 'Project Name', value: properties.project_name },
+                        { label: 'Public Name', value: properties.public_name },
+                        { label: 'Status', value: properties.status },
+                        { label: 'Parent Program', value: properties.parent_program },
+                        { label: 'Child Program', value: properties.child_program },
+                        { label: 'Project Manager', value: properties.project_manager },
+                        { label: 'Ward', value: properties.ward },
+                        { label: 'Suburb', value: properties.suburb }
+                    ];
+                }
 
                 let tooltipContent = '';
                 fields.forEach(field => {
@@ -785,37 +819,16 @@ function addModal(sourceId) {
                 let lineCenter = turf.center(geometry);
                 lon = lineCenter.geometry.coordinates[0];
                 lat = lineCenter.geometry.coordinates[1];
-            } else {
-                console.error("Unsupported geometry type:", geometry.type);
-                return;
             }
 
-            const pitch = 40;
-            const accessToken = mapboxgl.accessToken;
+            // Prepare static image URLs for any line or polygon geometries
             let staticImageUrls = [];
-            
-            // Generate static map images based on geometry type
-            if (geometry.type === "Polygon" || geometry.type === "MultiPolygon") {
-                const polygons = geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates;
-                
-                polygons.forEach((polygonCoords) => {
-                    const flattenedCoordinates = polygonCoords[0];
-                    const invertedCoordinates = flattenedCoordinates.map(coord => [coord[1], coord[0]]);
-                    let polylineEncoded = polyline.encode(invertedCoordinates);
-                    const polylineEncodedURL = encodeURIComponent(polylineEncoded);
-                    const pathOverlay = `path-5+395dbf-0.5+395dbf-0.5(${polylineEncodedURL})`;
-                    const staticImageUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${pathOverlay}/auto/600x500?logo=false&attribution=false&padding=75&access_token=${accessToken}`;
-                    staticImageUrls.push(staticImageUrl);
-                });
-            } else if (geometry.type === "Point") {
-                const pointMarker = `pin-l-star+000(${lon},${lat})`;
-                const staticImageUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${pointMarker}/${lon},${lat},18,0,${pitch}/600x500?logo=false&attribution=false&access_token=${accessToken}`;
-                staticImageUrls.push(staticImageUrl);
-            } else if (geometry.type === "LineString" || geometry.type === "MultiLineString") {
-                // Handle line geometries similar to polygons
-                const lines = geometry.type === "LineString" ? [geometry.coordinates] : geometry.coordinates;
-                lines.forEach((lineCoords) => {
-                    const invertedCoordinates = lineCoords.map(coord => [coord[1], coord[0]]);
+            if (geometry.type === "LineString" || geometry.type === "MultiLineString") {
+                const coordinates = geometry.coordinates;
+                coordinates.forEach((lineCoords, index) => {
+                    // Convert the coordinates to a Mapbox-compatible encoded polyline
+                    const lineCoordinates = lineCoords.length ? lineCoords : coordinates;
+                    const invertedCoordinates = lineCoordinates.map(coord => [coord[1], coord[0]]);
                     let polylineEncoded = polyline.encode(invertedCoordinates);
                     const polylineEncodedURL = encodeURIComponent(polylineEncoded);
                     const pathOverlay = `path-5+395dbf-1(${polylineEncodedURL})`;
@@ -825,10 +838,29 @@ function addModal(sourceId) {
             }
         
             // Build modal content
-            let modalContent = `<h3>${properties.project_name || 'Unnamed Project'}</h3>`;
+            let modalContent = '';
+            
+            // Add title based on source type
+            if (sourceId === 'BusinessPrecinctData') {
+                modalContent = `<h3>${properties.precinct_name || 'Unnamed Precinct'}</h3>`;
+            } else {
+                modalContent = `<h3>${properties.project_name || 'Unnamed Project'}</h3>`;
+            }
 
-            // Project details
-            const generalFields = [
+            // Define fields based on source type
+            const generalFields = sourceId === 'BusinessPrecinctData' ? [
+                { label: 'ID', value: properties.id },
+                { label: 'Suburb', value: properties.suburb },
+                { label: 'Main Roads', value: properties.main_roads },
+                { label: 'Business Count', value: properties.number_of_businesses_via_eco_dev_crms },
+                { label: 'Notes', value: properties.notes_councilbody_corpshopping_centre },
+                { label: 'Business Types', value: properties.business_types },
+                { label: 'Correct as per last site audit', value: properties.correct_as_per_last_site_audit},
+                {
+                    label: 'Fulcrum Link',
+                    value: `<a href="https://web.fulcrumapp.com/records/${properties.fulcrum_id}" target="_blank">View Record</a>`
+                }
+            ] : [
                 { label: 'Public Name', value: properties.public_name },
                 { label: 'Status', value: properties.status },
                 { label: 'Project Description', value: properties.project_description },

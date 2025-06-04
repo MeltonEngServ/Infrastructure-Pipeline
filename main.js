@@ -18,7 +18,7 @@ const mapboxStyle = savedTheme === 'light'
 
 
 // Set up the Mapbox map
-mapboxgl.accessToken = 'pk.eyJ1IjoibWVsdG9uZ2lzZGV2IiwiYSI6ImNtNjRsNmJxZTFtOGsycG9kbzJmOHRwZDUifQ.BGbshIeWBeymv1Tu8OsFEg';
+mapboxgl.accessToken = 'pk.eyJ1IjoibWVsdG9uZ2lzZGV2IiwiYSI6ImNtYmhhZHczbjA3OHkyaXBrMzVlcjBlbHcifQ.xN0syJbN7ZM7Fp9ExXAJhg';
 const map = new mapboxgl.Map({
   container: 'map',
   style: mapboxStyle,  // Dynamically set the map style based on theme
@@ -36,7 +36,7 @@ const map = new mapboxgl.Map({
 });
 
 // Define the Nearmap aerial layer
-const nearmapAPIKey = 'NzQ1Y2MzYjItYzc0NC00NWU5LTk2YmMtZTYxMWNiNTgxOGI5'; 
+const nearmapAPIKey = 'YTk1NmE2NDctNmIyNS00N2RiLTg1N2EtYWIzYzg3ZWE2M2Mz'; 
 
 const nearMapAerialLayer = {
     id: 'Nearmap_Layer',
@@ -638,13 +638,10 @@ function addTooltip(sourceId) {
                 } else {
                     fields = [
                         { label: 'Project Name', value: properties.project_name },
-                        { label: 'Public Name', value: properties.public_name },
                         { label: 'Status', value: properties.status },
                         { label: 'Parent Program', value: properties.parent_program },
                         { label: 'Child Program', value: properties.child_program },
-                        { label: 'Project Manager', value: properties.project_manager },
-                        { label: 'Ward', value: properties.ward },
-                        { label: 'Suburb', value: properties.suburb }
+                        { label: 'Project Manager', value: properties.project_manager }
                     ];
                 }
 
@@ -720,13 +717,10 @@ function addTooltip(sourceId) {
                 } else {
                     fields = [
                         { label: 'Project Name', value: properties.project_name },
-                        { label: 'Public Name', value: properties.public_name },
                         { label: 'Status', value: properties.status },
                         { label: 'Parent Program', value: properties.parent_program },
                         { label: 'Child Program', value: properties.child_program },
-                        { label: 'Project Manager', value: properties.project_manager },
-                        { label: 'Ward', value: properties.ward },
-                        { label: 'Suburb', value: properties.suburb }
+                        { label: 'Project Manager', value: properties.project_manager }
                     ];
                 }
 
@@ -851,14 +845,36 @@ function addModal(sourceId) {
                     
                     // Encode the coordinates into a polyline
                     let polylineEncoded = polyline.encode(invertedCoordinates);
-        
+
                     // Encode the polyline to be URL friendly
                     const polylineEncodedURL = encodeURIComponent(polylineEncoded);
-        
+
                     // Construct the static map URL with the path overlay before the access token
                     // Note: Path format: path-{strokeWidth}+{strokeColor}-{strokeOpacity}+{fillColor}-{fillOpacity}({polyline})
                     const pathOverlay = `path-5+395dbf-0.5+395dbf-0.5(${polylineEncodedURL})`;
                     // No pitch but automatically set zoom:
+                    const staticImageUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${pathOverlay}/auto/600x500?logo=false&attribution=false&padding=75&access_token=${accessToken}`;
+                    staticImageUrls.push(staticImageUrl);
+                });
+            } else if (geometry.type === "LineString" || geometry.type === "MultiLineString") {
+                // For MultiLineString, iterate through each line and create a URL for each
+                const lines = geometry.type === "LineString" ? [geometry.coordinates] : geometry.coordinates;
+                
+                lines.forEach((lineCoords) => {
+                    // Invert coordinates from [long, lat] to [lat, long]
+                    const invertedCoordinates = lineCoords.map(coord => [coord[1], coord[0]]);
+                    
+                    // Encode the coordinates into a polyline
+                    let polylineEncoded = polyline.encode(invertedCoordinates);
+                    
+                    // Encode the polyline to be URL friendly
+                    const polylineEncodedURL = encodeURIComponent(polylineEncoded);
+
+                    // Create a path overlay for the line - using a thicker stroke and no fill
+                    // Note: Path format for lines: path-{strokeWidth}+{strokeColor}-{strokeOpacity}({polyline})
+                    const pathOverlay = `path-6+395dbf-1(${polylineEncodedURL})`;
+                    
+                    // Use auto zoom to fit the entire line
                     const staticImageUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${pathOverlay}/auto/600x500?logo=false&attribution=false&padding=75&access_token=${accessToken}`;
                     staticImageUrls.push(staticImageUrl);
                 });

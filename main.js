@@ -568,8 +568,7 @@ function removeAllSourcesAndLayers() {
 
 // Function to re-add all GeoJSON sources and layers
 function reAddAllSourcesAndLayers() {
-
-    // Re-add Nearmap layer
+    // Re-add Nearmap layer first (bottom-most layer)
     map.addSource('Nearmap_Source', {
         type: 'raster',
         tiles: [`https://api.nearmap.com/tiles/v3/Vert/{z}/{x}/{y}.png?apikey=${nearmapAPIKey}`],
@@ -590,12 +589,19 @@ function reAddAllSourcesAndLayers() {
         },
     });
 
-        // Re-add GeoJson Data
-        geoJsonSourcesAndLayers.forEach(({ geojsonData, sourceId }) => {
-            if (!map.getSource(sourceId)) {
-                addGeoJsonSourceAndLayers(geojsonData, sourceId);
-            }
-        });
+    // Re-add Business Precincts data (if it exists)
+    if (window.precinctData) {
+        addGeoJsonData(window.precinctData, 'BusinessPrecinctData');
+    }
+
+    // Re-add Infrastructure Pipeline data (if it exists)
+    if (window.originalData) {
+        addGeoJsonData(window.originalData, 'InfraPipelineData');
+    }
+
+    // Re-create tooltips for both datasets
+    addTooltip('BusinessPrecinctData');
+    addTooltip('InfraPipelineData');
 }
 
 function addTooltip(sourceId) {

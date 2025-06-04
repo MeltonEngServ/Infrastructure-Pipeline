@@ -133,10 +133,16 @@
           <button id="showPopupsButton">Highlight Filtered Data</button>
           
 
+        <!-- Business Precincts Toggle -->
+        <li class="mb-1">
+          <button id="businessPrecinctsButton" class="btn btn-toggle active">
+            Business Precincts
+          </button>
+        </li>
+
+        <li class="border-top my-4" style="width: 87.5%; margin-left: 0%; margin-right: auto;"></li>
 
         <!-- Filter Dropdowns -->
-
-
         <li class="mb-1">
             <button id="parentProgramFilterDropdownButton" class="filter-dropdown-btn">
                 Parent Program
@@ -285,36 +291,15 @@
         <li class="border-top my-4" style="width: 87.5%; margin-left: 0%; margin-right: auto;"></li>
 
 
-        <!-- Business Precincts Toggle -->
-        <li class="mb-1">
-          <button id="businessPrecinctsButton" class="btn btn-toggle active">
-            Business Precincts
-          </button>
-        </li>
 
 
-        <li class="border-top my-4" style="width: 87.5%; margin-left: 0%; margin-right: auto;"></li>
+
 
 
         <p id="projectCount" class="text-muted mt-3" style="font-size: 0.75em; padding-left: 2%;">Total Projects: </p>
 
-        <li class="border-top my-4" style="width: 87.5%; margin-left: 0%; margin-right: auto;"></li>
-        
 
-          <!-- Generate Reports Dropdown -->
-          <li class="mb-1">
-            <button id="generateReportsDropdownButton" class="report-dropdown-btn">
-              Generate Report
-            </button>
-            <ul id="reportFormatDropdown">
-              <li><button id="generatePDFButton">PDF</button></li>
-              <li><button id="generateExcelButton">Excel</button></li>
-            </ul>
-          </li>
 
-          </ul>
-        </div>
-      </div>
 
       <!-- Modal -->
       <div class="modal fade" id="analysisModal" tabindex="-1" aria-labelledby="analysisModalLabel" aria-hidden="true">
@@ -340,8 +325,6 @@
     <script src="filter.js"></script>
 
     <script src="highlight filter.js"></script>
-
-    <script src="report generation.js"></script>
 
     <script src="dropdown filters.js"></script>
 

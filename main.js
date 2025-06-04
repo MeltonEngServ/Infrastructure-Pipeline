@@ -114,7 +114,8 @@ addressInput.addEventListener('input', function() {
         // Limit to first 6 results
         const limitedResults = matchedLocalFeatures.slice(0, 6);
     
-        limitedResults.forEach((feature, index) => {            const suggestionItem = document.createElement('div');
+        limitedResults.forEach((feature, index) => {            
+            const suggestionItem = document.createElement('div');
             const properties = feature.properties || {};
             const projectName = properties.project_name || 'Unknown Project Name';
             const assetId = properties.asset_id ? ` (Asset ID: ${properties.asset_id})` : '';
@@ -644,7 +645,6 @@ function addTooltip(sourceId) {
                 } else {
                     fields = [
                         { label: 'Project Name', value: properties.project_name },
-                        { label: 'Status', value: properties.status },
                         { label: 'Parent Program', value: properties.parent_program },
                         { label: 'Child Program', value: properties.child_program },
                         { label: 'Project Manager', value: properties.project_manager }
@@ -723,7 +723,6 @@ function addTooltip(sourceId) {
                 } else {
                     fields = [
                         { label: 'Project Name', value: properties.project_name },
-                        { label: 'Status', value: properties.status },
                         { label: 'Parent Program', value: properties.parent_program },
                         { label: 'Child Program', value: properties.child_program },
                         { label: 'Project Manager', value: properties.project_manager }
@@ -903,7 +902,6 @@ function addModal(sourceId) {
 
             // Define fields based on source type
             const generalFields = sourceId === 'BusinessPrecinctData' ? [
-                { label: 'ID', value: properties.id },
                 { label: 'Suburb', value: properties.suburb },
                 { label: 'Main Roads', value: properties.main_roads },
                 { label: 'Business Count', value: properties.number_of_businesses_via_eco_dev_crms },

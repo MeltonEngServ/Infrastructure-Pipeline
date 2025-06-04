@@ -8,10 +8,15 @@ function showFilteredDataPopups() {
         processFeatures(infraSource._data.features, currentTheme, 'infra');
     }
 
-    // Process Business Precinct Data
-    const businessSource = map.getSource('BusinessPrecinctData');
-    if (businessSource && businessSource._data && businessSource._data.features) {
-        processFeatures(businessSource._data.features, currentTheme, 'business');
+    // Process Business Precinct Data only if the layer is visible
+    const businessPrecinctsButton = document.getElementById('businessPrecinctsButton');
+    const isBusinessPrecinctsVisible = businessPrecinctsButton && businessPrecinctsButton.classList.contains('active');
+    
+    if (isBusinessPrecinctsVisible) {
+        const businessSource = map.getSource('BusinessPrecinctData');
+        if (businessSource && businessSource._data && businessSource._data.features) {
+            processFeatures(businessSource._data.features, currentTheme, 'business');
+        }
     }
 }
 

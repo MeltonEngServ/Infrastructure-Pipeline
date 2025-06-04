@@ -390,7 +390,6 @@ function createLegend() {
     }    
     
     const legendItems = {
-        'Business Precincts': '#FF69B4',   // Pink
         'Transport': '#294184',        // Dark Blue
         'Community': '#1891c9',        // Light Blue
         'Information Technology': '#cb0d0c',  // Red
@@ -399,7 +398,9 @@ function createLegend() {
         'Stormwater': '#00bcd4',       // Cyan
         'Land': '#9c27b0',            // Purple
         'Major Project': '#ff5722',    // Deep Orange
-        'Other': '#757575'            // Grey
+        'Other': '#757575',           // Grey
+        'Business Precincts': '#FF69B4'   // Pink
+
     };
 
     const legendContainer = document.getElementById("legend-items");
@@ -815,32 +816,57 @@ function addModal(sourceId) {
             let lon, lat;
         
             if (geometry.type === "Point") {
-                lat = coordinates[1];
-                lon = coordinates[0];
+                lat = coordinates[1];  // Inverted
+                lon = coordinates[0];  // Inverted
             } else if (geometry.type === "Polygon" || geometry.type === "MultiPolygon") {
-                let bounds = turf.bbox(geometry);
-                lon = (bounds[0] + bounds[2]) / 2;
-                lat = (bounds[1] + bounds[3]) / 2;
+                let bounds = turf.bbox(geometry); // Calculate bounding box
+                lon = (bounds[0] + bounds[2]) / 2; // Center longitude
+                lat = (bounds[1] + bounds[3]) / 2; // Center latitude
             } else if (geometry.type === "LineString" || geometry.type === "MultiLineString") {
                 let lineCenter = turf.center(geometry);
                 lon = lineCenter.geometry.coordinates[0];
                 lat = lineCenter.geometry.coordinates[1];
+            } else {
+                console.error("Unsupported geometry type:", geometry.type);
+                return;
             }
-
-            // Prepare static image URLs for any line or polygon geometries
+        
+            const pitch = 40;  // Fixed pitch
+        
+            const accessToken = mapboxgl.accessToken;
+        
+            // Encode polygon coordinates as a polyline for MultiPolygon
             let staticImageUrls = [];
-            if (geometry.type === "LineString" || geometry.type === "MultiLineString") {
-                const coordinates = geometry.coordinates;
-                coordinates.forEach((lineCoords, index) => {
-                    // Convert the coordinates to a Mapbox-compatible encoded polyline
-                    const lineCoordinates = lineCoords.length ? lineCoords : coordinates;
-                    const invertedCoordinates = lineCoordinates.map(coord => [coord[1], coord[0]]);
+            
+            if (geometry.type === "Polygon" || geometry.type === "MultiPolygon") {
+                // For MultiPolygon, iterate through each polygon and create a URL for each
+                const polygons = geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates;
+                
+                polygons.forEach((polygonCoords) => {
+                    // Flatten the coordinates
+                    const flattenedCoordinates = polygonCoords[0]; // First polygon if MultiPolygon
+                    
+                    // Invert coordinates from [long, lat] to [lat, long]
+                    const invertedCoordinates = flattenedCoordinates.map(coord => [coord[1], coord[0]]);
+                    
+                    // Encode the coordinates into a polyline
                     let polylineEncoded = polyline.encode(invertedCoordinates);
+        
+                    // Encode the polyline to be URL friendly
                     const polylineEncodedURL = encodeURIComponent(polylineEncoded);
-                    const pathOverlay = `path-5+395dbf-1(${polylineEncodedURL})`;
+        
+                    // Construct the static map URL with the path overlay before the access token
+                    // Note: Path format: path-{strokeWidth}+{strokeColor}-{strokeOpacity}+{fillColor}-{fillOpacity}({polyline})
+                    const pathOverlay = `path-5+395dbf-0.5+395dbf-0.5(${polylineEncodedURL})`;
+                    // No pitch but automatically set zoom:
                     const staticImageUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${pathOverlay}/auto/600x500?logo=false&attribution=false&padding=75&access_token=${accessToken}`;
                     staticImageUrls.push(staticImageUrl);
                 });
+            } else if (geometry.type === "Point") {
+                // If it's a Point, create a marker at the point
+                const pointMarker = `pin-l-star+000(${lon},${lat})`;
+                const staticImageUrl = `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${pointMarker}/${lon},${lat},18,0,${pitch}/600x500?logo=false&attribution=false&access_token=${accessToken}`;
+                staticImageUrls.push(staticImageUrl);
             }
         
             // Build modal content

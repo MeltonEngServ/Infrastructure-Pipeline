@@ -1,42 +1,65 @@
 function showFilteredDataPopups() {
-    const mapSource = map.getSource('InfraPipelineData');
+    // Get current theme (light or dark)
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
 
-    if (!mapSource || !mapSource._data || !mapSource._data.features) {
-        console.error("GeoJSON data not loaded or invalid.");
-        return;
+    // Process Infrastructure Pipeline Data
+    const infraSource = map.getSource('InfraPipelineData');
+    if (infraSource && infraSource._data && infraSource._data.features) {
+        processFeatures(infraSource._data.features, currentTheme, 'infra');
     }
 
-    const filteredFeatures = mapSource._data.features;
+    // Process Business Precinct Data
+    const businessSource = map.getSource('BusinessPrecinctData');
+    if (businessSource && businessSource._data && businessSource._data.features) {
+        processFeatures(businessSource._data.features, currentTheme, 'business');
+    }
+}
 
-    // Get current theme (light or dark)
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';    // Loop through the filtered features and create a popup for each
-    filteredFeatures.forEach((feature) => {
+function processFeatures(features, currentTheme, dataType) {
+    features.forEach((feature) => {
         const properties = feature.properties || {};
-        
-        // Start building the popup content with required fields
-        let popupContent = '<strong>Project Name:</strong> ' + (properties.project_name || 'Unnamed Project') + '<br>';
+        let popupContent = '';
 
-        // Add Project Description if available
-        if (properties.project_description) {
-            const description = properties.project_description.length > 100 ? 
-                properties.project_description.substring(0, 100) + '...' : 
-                properties.project_description;
-            popupContent += `<strong>Description:</strong> ${description}<br>`;
-        }
+        if (dataType === 'infra') {
+            // Infrastructure Pipeline data popup content
+            popupContent = '<strong>Project Name:</strong> ' + (properties.project_name || 'Unnamed Project') + '<br>';
 
-        // Add Parent Program if available
-        if (properties.parent_program) {
-            popupContent += `<strong>Parent Program:</strong> ${properties.parent_program}<br>`;
-        }
+            if (properties.project_description) {
+                const description = properties.project_description.length > 100 ? 
+                    properties.project_description.substring(0, 100) + '...' : 
+                    properties.project_description;
+                popupContent += `<strong>Description:</strong> ${description}<br>`;
+            }
 
-        // Add Child Program if available
-        if (properties.child_program) {
-            popupContent += `<strong>Child Program:</strong> ${properties.child_program}<br>`;
-        }
+            if (properties.parent_program) {
+                popupContent += `<strong>Parent Program:</strong> ${properties.parent_program}<br>`;
+            }
 
-        // Add Project Start Year if available
-        if (properties.project_or_program_start_year || properties.start_year) {
-            popupContent += `<strong>Start Year:</strong> ${properties.project_or_program_start_year || properties.start_year}<br>`;
+            if (properties.child_program) {
+                popupContent += `<strong>Child Program:</strong> ${properties.child_program}<br>`;
+            }
+
+            if (properties.project_or_program_start_year || properties.start_year) {
+                popupContent += `<strong>Start Year:</strong> ${properties.project_or_program_start_year || properties.start_year}<br>`;
+            }
+        } else if (dataType === 'business') {
+            // Business Precinct data popup content
+            popupContent = '<strong>Precinct:</strong> ' + (properties.precinct_name || 'Unnamed Precinct') + '<br>';
+
+            if (properties.description) {
+                const description = properties.description.length > 100 ? 
+                    properties.description.substring(0, 100) + '...' : 
+                    properties.description;
+                popupContent += `<strong>Description:</strong> ${description}<br>`;
+            }
+
+            if (properties.type) {
+                popupContent += `<strong>Type:</strong> ${properties.type}<br>`;
+            }
+
+            if (properties.status) {
+                popupContent += `<strong>Status:</strong> ${properties.status}<br>`;
+            }
         }
 
         // If no valid data, set a fallback message

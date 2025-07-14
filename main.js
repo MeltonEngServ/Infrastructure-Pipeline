@@ -335,7 +335,7 @@ map.on('load', async function () {
         addGeoJsonData(window.precinctData, 'BusinessPrecinctData');
 
         // Then fetch and add Infrastructure Pipeline data (top layer)
-        const infraResponse = await fetch('https://web.fulcrumapp.com/shares/0107845e48091efd.geojson');
+        const infraResponse = await fetch('https://web.fulcrumapp.com/shares/b506aedbe44ffa5d.geojson');
         if (!infraResponse.ok) {
             throw new Error(`Failed to load Infrastructure Pipeline GeoJSON. Status: ${infraResponse.status}`);
         }
